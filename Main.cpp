@@ -1,9 +1,10 @@
 #include <iostream>
-#include "FileManager.h"
 
 int main()
 {
 
+	
+	std::cin.ignore();
 
 	return 0;
 }
