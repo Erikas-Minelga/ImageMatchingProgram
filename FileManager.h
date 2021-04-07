@@ -10,6 +10,9 @@ class FileManager
 	public:
 		FileManager() {}
 		~FileManager() {}
+
+		static std::stringstream readFromFile(std::string path);
+		static void writeToFile(std::stringstream data, std::string path);
 };
 
 #endif
