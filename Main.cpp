@@ -3,6 +3,17 @@
 #include <string>
 #include <algorithm>
 #include "Image.h"
+#include <map>
+
+struct ImgCoords
+{
+	ImgCoords(int min_x, int max_x, int min_y, int max_y, int score) { this->min_x = min_x; this->max_x = max_x; this->min_y = min_y; this->max_y = max_y; this->score = score; }
+	int min_x;
+	int max_x;
+	int min_y;
+	int max_y;
+	int score;
+};
 
 Image readFromFile(std::string path)
 {
@@ -71,10 +82,13 @@ int main()
 
 	std::cout << "Query image loaded in. Dimensions: " << query.Height() << "x" << query.Width() << "..." << std::endl;
 
-	std::cout << "Finding the best match to query image in the scene image..." << std::endl;
+	std::vector<ImgCoords> matches;
+	int num_matches;
 
-	int min_x = 0, max_x = 0, min_y = 0, max_y = 0;		//Keep track of the coordinates of the best match, to draw outline in the scene image based on it
-	int ssd = 1000000000;		//The lower the score, the better the match
+	std::cout << "Please enter the number of closest matches you would like to find:" << std::endl;
+	std::cin >> num_matches;
+
+	std::cout << "Finding the best matches to query image in the scene image..." << std::endl;
 
 	for (int i = 0; i < scene.Height(); i += query.Height())
 	{
@@ -87,30 +101,32 @@ int main()
 				j = scene.Width() - query.Width();
 			
 			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
-
-			//scene.drawOutline(j, j + query.Width(), i, i + query.Height());
-			//writeToFile(sub, "subimg.pgm");
 			
 			//Sum of Squared Differences;
-			sub = sub - query;
-			sub.square();
+			Image sub2 = query - sub;
+			sub2.square();
 
-			int img_sum = sub.sum();
-			if (sub.sum() < ssd)
+			int img_sum = sub2.sum();
+			if (matches.size() < num_matches)
 			{
-				ssd = sub.sum();
-				min_x = j;
-				max_x = j + query.Width();
-				min_y = i;
-				max_y = i + query.Height();
+				matches.push_back(ImgCoords(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum()));
+			}
+			else
+			{
+				if (sub2.sum() < matches[num_matches - 1].score)
+				{
+					matches[num_matches - 1] = ImgCoords(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum());
+					std::sort(matches.begin(), matches.end(), [](ImgCoords a, ImgCoords b) {return a.score < b.score; });
+				}
 			}
 		}
 	}
-	std::cout << "Matching completed. Drawing black outline around the closest match..." << std::endl;
+	std::cout << "Matching completed. Drawing outlines around the closest matches..." << std::endl;
 
-	scene.drawOutline(min_x, max_x, min_y, max_y);
+	for(int i = 0; i < matches.size(); i++)
+		scene.drawOutline(matches[i].min_x, matches[i].max_x, matches[i].min_y, matches[i].max_y, i);
 
-	std::cout << "Outline drawn. Writing output to a pgm file..." << std::endl;
+	std::cout << "Outlines drawn. Writing output to a pgm file..." << std::endl;
 
 	writeToFile(scene, "result.pgm");
 

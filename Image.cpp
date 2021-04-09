@@ -33,13 +33,14 @@ Image Image :: createSubImage(int minWidth, int maxWidth, int minHeight, int max
 	return i;
 }
 
-void Image::drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight)
+void Image::drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight, int col)
 {
 	for (int i = minHeight; i < maxHeight; i++)
 	{
 		for (int j = minWidth; j < maxWidth; j++)
 		{
-			this->data[this->width * i + j] = 0;
+			if(i <= minHeight + 6 || i >= maxHeight - 7 || j <= minWidth + 6 || j >= maxWidth - 7)
+				this->data[this->width * i + j] = col + 5;		//The brighter the colour, the less a match
 		}
 	}
 }
