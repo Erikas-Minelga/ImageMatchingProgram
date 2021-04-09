@@ -88,8 +88,8 @@ int main()
 			
 			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
 
-			scene.drawOutline(j, j + query.Width(), i, i + query.Height());
-			writeToFile(scene, "result.pgm");
+			//scene.drawOutline(j, j + query.Width(), i, i + query.Height());
+			//writeToFile(scene, "result.pgm");
 			
 			//Sum of Squared Differences;
 			sub = sub - query;
@@ -108,7 +108,7 @@ int main()
 	}
 	std::cout << "Matching completed. Drawing black outline around the closest match..." << std::endl;
 
-	//scene.drawOutline(min_x, max_x, min_y, max_y);
+	scene.drawOutline(min_x, max_x, min_y, max_y);
 
 	std::cout << "Outline drawn. Writing output to a pgm file..." << std::endl;
 
