@@ -89,7 +89,7 @@ int main()
 			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
 
 			//scene.drawOutline(j, j + query.Width(), i, i + query.Height());
-			//writeToFile(scene, "result.pgm");
+			//writeToFile(sub, "subimg.pgm");
 			
 			//Sum of Squared Differences;
 			sub = sub - query;

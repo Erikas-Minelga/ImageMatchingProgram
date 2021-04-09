@@ -24,7 +24,8 @@ Image Image :: createSubImage(int minWidth, int maxWidth, int minHeight, int max
 	{
 		for (int j = minWidth; j < maxWidth; j++)
 		{
-			img.push_back(data[maxWidth * i + j]);
+			int index = this->width * i + j;
+			img.push_back(data[index]);
 		}
 	}
 
@@ -38,10 +39,7 @@ void Image::drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight
 	{
 		for (int j = minWidth; j < maxWidth; j++)
 		{
-			if (i > minHeight && i < maxHeight && j > minWidth && j < maxWidth)
-				continue;
-
-			this->data[j * maxWidth + i] = 0;
+			this->data[this->width * i + j] = 0;
 		}
 	}
 }
