@@ -17,7 +17,7 @@ class Image
 		
 		int sum();
 		void square();
-		Image createSubImage(int minWidth, int maxWidth, int minHeight, int maxHeight);
+		Image* createSubImage(int minWidth, int maxWidth, int minHeight, int maxHeight);
 		void drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight, int col);
 		void writeToFile(std::string path);
 

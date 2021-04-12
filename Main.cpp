@@ -42,10 +42,10 @@ int main()
 			if (j > scene.Width() - query.Width())
 				j = scene.Width() - query.Width();
 			
-			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
+			Image* sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
 			
 			//Sum of Squared Differences;
-			Image sub2 = query - sub;
+			Image sub2 = query - *sub;
 			sub2.square();
 
 			int img_sum = sub2.sum();
@@ -55,12 +55,14 @@ int main()
 			}
 			else
 			{
-				if (sub2.sum() < matches[num_matches - 1].score)
+				if (img_sum < matches[num_matches - 1].score)
 				{
-					matches[num_matches - 1] = Match(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum());
+					matches[num_matches - 1] = Match(j, j + sub2.Width(), i, i + sub2.Height(), img_sum);
 					std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });
 				}
 			}
+
+			delete sub;
 		}
 	}
 	std::cout << "Matching completed. Drawing outlines around the closest matches..." << std::endl;

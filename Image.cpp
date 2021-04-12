@@ -54,7 +54,7 @@ void Image::square()
 		this->data[i] *= this->data[i];
 }
 
-Image Image :: createSubImage(int minWidth, int maxWidth, int minHeight, int maxHeight)
+Image* Image :: createSubImage(int minWidth, int maxWidth, int minHeight, int maxHeight)
 {
 	std::vector<int> img;
 
@@ -67,7 +67,7 @@ Image Image :: createSubImage(int minWidth, int maxWidth, int minHeight, int max
 		}
 	}
 
-	Image i(img, maxHeight - minHeight, maxWidth - minWidth);
+	Image* i = new Image(img, maxHeight - minHeight, maxWidth - minWidth);
 	return i;
 }
 
