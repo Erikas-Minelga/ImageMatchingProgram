@@ -1,13 +1,10 @@
-#include <fstream>
-#include <sstream>
-#include <string>
 #include <algorithm>
 #include "Image.h"
 #include <map>
 
-struct ImgCoords
+struct Match
 {
-	ImgCoords(int min_x, int max_x, int min_y, int max_y, int score) { this->min_x = min_x; this->max_x = max_x; this->min_y = min_y; this->max_y = max_y; this->score = score; }
+	Match(int min_x, int max_x, int min_y, int max_y, int score) { this->min_x = min_x; this->max_x = max_x; this->min_y = min_y; this->max_y = max_y; this->score = score; }
 	int min_x;
 	int max_x;
 	int min_y;
@@ -82,7 +79,7 @@ int main()
 
 	std::cout << "Query image loaded in. Dimensions: " << query.Height() << "x" << query.Width() << "..." << std::endl;
 
-	std::vector<ImgCoords> matches;
+	std::vector<Match> matches;
 	int num_matches;
 
 	std::cout << "Please enter the number of closest matches you would like to find:" << std::endl;
@@ -109,14 +106,14 @@ int main()
 			int img_sum = sub2.sum();
 			if (matches.size() < num_matches)
 			{
-				matches.push_back(ImgCoords(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum()));
+				matches.push_back(Match(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum()));
 			}
 			else
 			{
 				if (sub2.sum() < matches[num_matches - 1].score)
 				{
-					matches[num_matches - 1] = ImgCoords(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum());
-					std::sort(matches.begin(), matches.end(), [](ImgCoords a, ImgCoords b) {return a.score < b.score; });
+					matches[num_matches - 1] = Match(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum());
+					std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });
 				}
 			}
 		}

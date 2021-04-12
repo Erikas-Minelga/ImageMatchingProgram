@@ -1,5 +1,45 @@
 #include "Image.h"
 
+Image::Image(std::string img_path)
+{
+	std::fstream f;
+	//std::vector<int> pixels;
+	this->height = 0; 
+	this->width = 0;
+	int lnCtr = 1, pxCtr = 0;
+	std::stringstream ss;
+	std::string ln;
+
+	f.open(img_path.c_str());
+
+	while (std::getline(f, ln))
+	{
+		if (lnCtr == 1 || lnCtr == 2 || lnCtr == 4)
+		{
+			lnCtr++;
+			continue;
+		}
+		else if (lnCtr == 3)
+		{
+			ss << ln;
+			ss >> this->width >> this->height;
+			this->data.resize(height * width);
+		}
+		else
+		{
+			ss << ln;
+			ss >> this->data[pxCtr];
+			pxCtr++;
+		}
+
+		ss.clear();
+
+		lnCtr++;
+	}
+
+	f.close();
+}
+
 int Image::sum()
 {
 	int sum = 0;
