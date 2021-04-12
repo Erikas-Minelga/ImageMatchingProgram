@@ -6,6 +6,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 class Image
 {
@@ -16,12 +17,13 @@ class Image
 		Image(std::string img_path);
 		
 		int sum();
-		void square();
+		Image square();
 		Image* createSubImage(int minWidth, int maxWidth, int minHeight, int maxHeight);
 		void drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight, int col);
 		void writeToFile(std::string path);
 
-		Image operator-(const Image& i);
+		Image operator-(const Image& img);
+		Image operator*(const Image& img);
 
 		int Height() { return this->height; }
 		int Width() { return this->width; }

@@ -48,10 +48,13 @@ int Image::sum()
 	return sum;
 }
 
-void Image::square()
+Image Image::square()
 {
-	for (int i = 0; i < data.size(); i++)
-		this->data[i] *= this->data[i];
+	Image img(this->data,this->height,this->width);
+	for (int i = 0; i < this->data.size(); i++)
+		img.data[i] = this->data[i] * this->data[i];
+
+	return img;
 }
 
 Image* Image :: createSubImage(int minWidth, int maxWidth, int minHeight, int maxHeight)
@@ -98,6 +101,8 @@ void Image::writeToFile(std::string path)
 	f.close();
 }
 
+
+//Operator overloads
 Image Image :: operator-(const Image& img)
 {
 	if (this->height != img.height || this->width != img.width)
@@ -106,7 +111,21 @@ Image Image :: operator-(const Image& img)
 	std::vector<int> tmp;
 	tmp.resize(img.height * img.width);
 	for (int i = 0; i < this->data.size(); i++)
-		tmp[i] = data[i] -= img.data[i];
+		tmp[i] = this->data[i] - img.data[i];
 
 	return Image(tmp, img.height, img.width);
 }
+
+Image Image :: operator*(const Image& img)
+{
+	if (this->height != img.height || this->width != img.width)
+		return Image();
+
+	std::vector<int> tmp;
+	tmp.resize(img.height * img.width);
+	for (int i = 0; i < this->data.size(); i++)
+		tmp[i] = this->data[i] * img.data[i];
+
+	return Image(tmp, img.height, img.width);
+}
+
