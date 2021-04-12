@@ -12,70 +12,15 @@ struct Match
 	int score;
 };
 
-Image readFromFile(std::string path)
-{
-	std::fstream f;
-	std::vector<int> pixels;
-	int height = 0, width = 0, lnCtr = 1, pxCtr = 0;
-	std::stringstream ss;
-	std::string ln;
-
-	f.open(path.c_str());
-
-	while (std::getline(f, ln))
-	{
-		if (lnCtr == 1 || lnCtr == 2 || lnCtr == 4)
-		{
-			lnCtr++;
-			continue;
-		}
-		else if (lnCtr == 3)
-		{
-			ss << ln;
-			ss >> width >> height;
-			pixels.resize(height * width);
-		}
-		else
-		{
-			ss << ln;
-			ss >> pixels[pxCtr];
-			pxCtr++;
-		}
-
-		ss.clear();
-
-		lnCtr++;
-	}
-
-	f.close();
-
-	return Image(pixels, height, width);
-}
-
-void writeToFile(Image &img, std::string path)
-{
-	std::ofstream f(path.c_str());		//Have to use ofstream to write to a file
-
-	f << "P2" << std::endl;
-	f << "# Created by NearestNeighbourSearch program" << std::endl;
-	f << img.Width() << " " << img.Height() << std::endl;
-	f << "255" << std::endl;
-
-	for (int i = 0; i < img.Height() * img.Width(); i++)
-		f << img[i] << std::endl;
-
-	f.close();
-}
-
 int main()
 {
 	std::cout << "Program starting..." << std::endl;
 
-	Image scene = readFromFile("scene.pgm");
+	Image scene("scene.pgm");
 
 	std::cout <<"Scene image loaded in. Dimensions: " << scene.Height() << "x" << scene.Width() << "..." << std::endl;
 
-	Image query = readFromFile("query.pgm");
+	Image query("query.pgm");
 
 	std::cout << "Query image loaded in. Dimensions: " << query.Height() << "x" << query.Width() << "..." << std::endl;
 
@@ -106,7 +51,7 @@ int main()
 			int img_sum = sub2.sum();
 			if (matches.size() < num_matches)
 			{
-				matches.push_back(Match(j, j + sub2.Width(), i, i + sub2.Height(), sub2.sum()));
+				matches.push_back(Match(j, j + sub2.Width(), i, i + sub2.Height(), img_sum));
 			}
 			else
 			{
@@ -125,7 +70,7 @@ int main()
 
 	std::cout << "Outlines drawn. Writing output to a pgm file..." << std::endl;
 
-	writeToFile(scene, "result.pgm");
+	scene.writeToFile("result.pgm");
 
 	std::cout << "Output File Created. Press any key to continue..." << std::endl;
 

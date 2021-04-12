@@ -21,11 +21,10 @@ class Image
 		void square();
 		Image createSubImage(int minWidth, int maxWidth, int minHeight, int maxHeight);
 		void drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight, int col);
-		void writeToFile();
+		void writeToFile(std::string path);
 
 		//Operator overloads
 		Image operator-(const Image& i);
-		int operator[](int i);
 
 		//Getters
 		int Height() { return this->height; }

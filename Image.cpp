@@ -3,7 +3,6 @@
 Image::Image(std::string img_path)
 {
 	std::fstream f;
-	//std::vector<int> pixels;
 	this->height = 0; 
 	this->width = 0;
 	int lnCtr = 1, pxCtr = 0;
@@ -80,9 +79,24 @@ void Image::drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight
 		for (int j = minWidth; j < maxWidth; j++)
 		{
 			if(i <= minHeight + 6 || i >= maxHeight - 7 || j <= minWidth + 6 || j >= maxWidth - 7)
-				this->data[this->width * i + j] = col + 5;		//The brighter the colour, the less a match
+				this->data[this->width * i + j] = col * 20 < 255 ? col * 20 : 255;		//The brighter the colour, the less a match. Ternary operator clamps the value to 255 if the result exceeds it
 		}
 	}
+}
+
+void Image::writeToFile(std::string path)
+{
+	std::ofstream f(path.c_str());		//Have to use ofstream to write to a file
+
+	f << "P2" << std::endl;
+	f << "# Created by NearestNeighbourSearch program" << std::endl;
+	f << this->width << " " << this->height << std::endl;
+	f << "255" << std::endl;
+
+	for (int i = 0; i < this->height * this->width; i++)
+		f << this->data[i] << std::endl;
+
+	f.close();
 }
 
 Image Image :: operator-(const Image& img)
@@ -96,9 +110,4 @@ Image Image :: operator-(const Image& img)
 		tmp[i] = data[i] -= img.data[i];
 
 	return Image(tmp, img.height, img.width);
-}
-
-int Image :: operator[](int i)
-{
-	return data[i];
 }
