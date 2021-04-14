@@ -40,9 +40,10 @@ void SSD(Image &scene, Image &query, std::vector<Match> &matches, int &num_match
 				if (img_sum < matches[num_matches - 1].score)
 				{
 					matches[num_matches - 1] = Match(j, j + sub3.Width(), i, i + sub3.Height(), img_sum);
-					std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });
 				}
 			}
+
+			std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });
 
 			delete sub;
 		}
@@ -66,25 +67,22 @@ void NCC(Image& scene, Image& query, std::vector<Match>& matches, int& num_match
 
 			Image* sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
 			
-			Image corrImg = *sub * query;
+			Image corrImg = *sub * query;		
 			int corr = corrImg.sum();
-			Image sub2 = sub->square();
+			Image subSquare = sub->square();
 			Image querySquare = query.square();
-			float nccScore = sqrt(sub2.sum() * querySquare.sum());
-			nccScore = corr / nccScore;
+			float nccScore = sqrt(subSquare.sum()) * sqrt(querySquare.sum());
+			float finalScore = corr / nccScore;
 
 			if (matches.size() < num_matches)
-			{
-				matches.push_back(Match(j, j + sub->Width(), i, i + sub->Height(), nccScore));
-			}
+				matches.push_back(Match(j, j + sub->Width(), i, i + sub->Height(), finalScore));
 			else
 			{
 				if (nccScore > matches[num_matches - 1].score)
-				{
-					matches[num_matches - 1] = Match(j, j + sub->Width(), i, i + sub->Height(), nccScore);
-					std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score > b.score; });
-				}
+					matches[num_matches - 1] = Match(j, j + sub->Width(), i, i + sub->Height(), finalScore);
 			}
+
+			std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score > b.score; });
 
 			delete sub;
 		}
@@ -130,7 +128,7 @@ int main()
 	}
 	
 	std::cout << "Matching completed. Drawing outlines around the closest matches..." << std::endl;
-	std::cout << "INFORMATION: The darker the outline, the closest the match it is" << std::endl;
+	std::cout << "INFORMATION: The darker the outline, the closer the match it is" << std::endl;
 
 	for(int i = 0; i < matches.size(); i++)
 		scene.drawOutline(matches[i].min_x, matches[i].max_x, matches[i].min_y, matches[i].max_y, i);
