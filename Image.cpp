@@ -43,7 +43,8 @@ int Image::sum()
 {
 	int sum = 0;
 
-	for (auto& a : data) sum += a;
+	for (int i = 0; i < this->data.size() - 1; i++) 
+		sum += this->data[i];
 
 	return sum;
 }

@@ -19,27 +19,27 @@ void SSD(Image &scene, Image &query, std::vector<Match> &matches, int &num_match
 	{
 		for (int j = 0; j < scene.Width(); j += query.Width())
 		{
-			//Readjust i and j when close to the edges
-			if (i > scene.Height() - query.Height())
+			if(i > scene.Height() - query.Height())
 				i = scene.Height() - query.Height();
-			if (j > scene.Width() - query.Width())
+
+			if(j > scene.Width() - query.Width())
 				j = scene.Width() - query.Width();
 
 			Image* sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
 
-			Image sub2 = query - *sub;
+			Image sub2 = *sub - query;
 			Image sub3 = sub2.square();
 
 			int img_sum = sub3.sum();
 			if (matches.size() < num_matches)
 			{
-				matches.push_back(Match(j, j + sub3.Width(), i, i + sub3.Height(), img_sum));
+				matches.push_back(Match(j, j + sub->Width(), i, i + sub->Height(), img_sum));
 			}
 			else
 			{
 				if (img_sum < matches[num_matches - 1].score)
 				{
-					matches[num_matches - 1] = Match(j, j + sub3.Width(), i, i + sub3.Height(), img_sum);
+					matches[num_matches - 1] = Match(j, j + sub->Width(), i, i + sub->Height(), img_sum);
 				}
 			}
 
@@ -59,9 +59,9 @@ void NCC(Image& scene, Image& query, std::vector<Match>& matches, int& num_match
 	{
 		for (int j = 0; j < scene.Width(); j += query.Width())
 		{
-			//Readjust i and j when close to the edges
 			if (i > scene.Height() - query.Height())
 				i = scene.Height() - query.Height();
+
 			if (j > scene.Width() - query.Width())
 				j = scene.Width() - query.Width();
 
