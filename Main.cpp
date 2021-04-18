@@ -2,91 +2,31 @@
 
 struct Match
 {
-	Match(int min_x, int max_x, int min_y, int max_y, int score) { this->min_x = min_x; this->max_x = max_x; this->min_y = min_y; this->max_y = max_y; this->score = score; }
+	Match(int min_x, int max_x, int min_y, int max_y, float score) { this->min_x = min_x; this->max_x = max_x; this->min_y = min_y; this->max_y = max_y; this->score = score; }
 	int min_x;
 	int max_x;
 	int min_y;
 	int max_y;
-	int score;
+	float score;
 };
 
 //Sum of Squared Differences
-void SSD(Image &scene, Image &query, std::vector<Match> &matches, int &num_matches)
+float SSD(Image &sub, Image &query)
 {
-	std::cout << "Calculating the best matches using Sum of Squared Differences..." << std::endl;
-
-	for (int i = 0; i < scene.Height(); i += query.Height())
-	{
-		for (int j = 0; j < scene.Width(); j += query.Width())
-		{
-			if(i > scene.Height() - query.Height())
-				i = scene.Height() - query.Height();
-
-			if(j > scene.Width() - query.Width())
-				j = scene.Width() - query.Width();
-
-			Image* sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
-
-			Image sub2 = *sub - query;
-			Image sub3 = sub2.square();
-
-			int img_sum = sub3.sum();
-			if (matches.size() < num_matches)
-			{
-				matches.push_back(Match(j, j + sub->Width(), i, i + sub->Height(), img_sum));
-			}
-			else
-			{
-				if (img_sum < matches[num_matches - 1].score)
-				{
-					matches[num_matches - 1] = Match(j, j + sub->Width(), i, i + sub->Height(), img_sum);
-				}
-			}
-
-			std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });
-
-			delete sub;
-		}
-	}
+	Image sub2 = sub - query;
+	Image sub3 = sub2.square();
+	return sub3.sum();
 }
 
 //Normalised Cross Correlation
-void NCC(Image& scene, Image& query, std::vector<Match>& matches, int& num_matches)
+float NCC(Image& sub, Image& query)
 {
-	std::cout << "Calculating the best matches using Normalised Cross Correlation..." << std::endl;
-
-	for (int i = 0; i < scene.Height(); i += query.Height())
-	{
-		for (int j = 0; j < scene.Width(); j += query.Width())
-		{
-			if (i > scene.Height() - query.Height())
-				i = scene.Height() - query.Height();
-
-			if (j > scene.Width() - query.Width())
-				j = scene.Width() - query.Width();
-
-			Image* sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
-			
-			Image corrImg = *sub * query;		
-			int corr = corrImg.sum();
-			Image subSquare = sub->square();
-			Image querySquare = query.square();
-			float nccScore = sqrt(subSquare.sum()) * sqrt(querySquare.sum());
-			float finalScore = corr / nccScore;
-
-			if (matches.size() < num_matches)
-				matches.push_back(Match(j, j + sub->Width(), i, i + sub->Height(), finalScore));
-			else
-			{
-				if (nccScore > matches[num_matches - 1].score)
-					matches[num_matches - 1] = Match(j, j + sub->Width(), i, i + sub->Height(), finalScore);
-			}
-
-			std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score > b.score; });
-
-			delete sub;
-		}
-	}
+	Image corrImg = sub * query;		
+	int corr = corrImg.sum();
+	Image subSquare = sub.square();
+	Image querySquare = query.square();
+	float nccScore = sqrt(subSquare.sum()) * sqrt(querySquare.sum());
+	return corr / nccScore;
 }
 
 int main()
@@ -115,16 +55,49 @@ int main()
 		std::cin >> algorithm;
 	} while (algorithm < 1 || algorithm > 2);
 
-	switch (algorithm)
+
+	std::cout << "Calculating the best matches..." << std::endl;
+
+	for (int i = 0; i < scene.Height(); i += query.Height())
 	{
-		case 1:
-			SSD(scene, query, matches, num_matches);
-			break;
-		case 2:
-			NCC(scene, query, matches, num_matches);
-			break;
-		default:
-			break;
+		for (int j = 0; j < scene.Width(); j += query.Width())
+		{
+			if (i > scene.Height() - query.Height())
+				i = scene.Height() - query.Height();
+
+			if (j > scene.Width() - query.Width())
+				j = scene.Width() - query.Width();
+
+			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
+			float score = 0;
+
+			switch (algorithm)
+			{
+				case 1:
+					score = SSD(sub, query);
+					break;
+				case 2:
+					score = NCC(sub, query);
+					break;
+				default:
+					break;
+			}
+
+			if (matches.size() < num_matches)
+			{
+				matches.push_back(Match(j, j + sub.Width(), i, i + sub.Height(), score));
+			}
+			else
+			{
+				if (score < matches[num_matches - 1].score)
+				{
+					matches[num_matches - 1] = Match(j, j + sub.Width(), i, i + sub.Height(), score);
+				}
+			}
+
+			if(num_matches > 1)			//No need to sort if user only wants 1 match
+				std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });
+		}
 	}
 	
 	std::cout << "Matching completed. Drawing outlines around the closest matches..." << std::endl;
