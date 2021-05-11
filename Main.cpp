@@ -58,14 +58,14 @@ int main()
 
 	std::cout << "Calculating the best matches..." << std::endl;
 
-	for (int i = 0; i < scene.Height(); i += query.Height())
+	for (int i = 0; i < scene.Height(); i += query.Height() / 2)
 	{
-		for (int j = 0; j < scene.Width(); j += query.Width())
+		for (int j = 0; j < scene.Width(); j += query.Width() / 2)
 		{
-			if (i > scene.Height() - query.Height())
+			if (i + query.Height() > scene.Height())
 				i = scene.Height() - query.Height();
 
-			if (j > scene.Width() - query.Width())
+			if (j + query.Width() > scene.Width())
 				j = scene.Width() - query.Width();
 
 			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
