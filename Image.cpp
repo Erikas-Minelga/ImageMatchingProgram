@@ -13,7 +13,7 @@ Image::Image(std::string img_path)
 
 	while (std::getline(f, ln))
 	{
-		if (lnCtr == 1 || lnCtr == 2 || lnCtr == 4)
+		if (lnCtr == 1 || lnCtr == 2 || lnCtr == 4)		//Assumption is made that line 2 is a comment which may not always be the case
 		{
 			lnCtr++;
 			continue;
@@ -89,7 +89,7 @@ void Image::drawOutline(int minWidth, int maxWidth, int minHeight, int maxHeight
 
 void Image::writeToFile(std::string path)
 {
-	std::ofstream f(path.c_str());		//Have to use ofstream to write to a file
+	std::ofstream f(path.c_str());
 
 	f << "P2" << std::endl;
 	f << "# Created by NearestNeighbourSearch program" << std::endl;

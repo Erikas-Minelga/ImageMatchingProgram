@@ -18,7 +18,6 @@ float calculateScore(Image &sub, Image &query)
 	return sub3.sum();
 }
 
-
 int main()
 {
 	std::cout << "Program starting..." << std::endl;
@@ -94,4 +93,8 @@ int main()
 References:
 1. http://www.micc.unifi.it/delbimbo/wp-content/uploads/2013/11/A33_Matching.pdf
 2. https://www.youtube.com/watch?v=ngEC3sXeUb4
+
+
+Test image taken from:
+https://www.firstpost.com/tech/news-analysis/wheres-waldo-googles-april-fools-day-gift-will-have-you-combing-through-maps-looking-for-wally-and-his-pals-4413969.html
 */
