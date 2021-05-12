@@ -10,30 +10,14 @@ struct Match
 	float score;
 };
 
-//Sum of Squared Differences
-float SSD(Image &sub, Image &query)
+float calculateScore(Image &sub, Image &query)
 {
+	//Sum of Squared Differences algorithm is used
 	Image sub2 = sub - query;
 	Image sub3 = sub2.square();
 	return sub3.sum();
 }
 
-//Normalised Cross Correlation
-float NCC(Image& sub, Image& query)
-{
-	Image corrImg = sub * query;		
-	int corr = corrImg.sum();
-	Image subSquare = sub.square();
-	Image querySquare = query.square();
-	float nccScore = sqrt(subSquare.sum()) * sqrt(querySquare.sum());
-	return corr / nccScore;
-}
-
-Image getSubImage(Image *scene, int minWidth, int maxWidth, int minHeight, int maxHeight)
-{
-	//Image sub = scene->createSubImage(minWidth, maxWidth, minHeight, maxHeight);
-	return scene->createSubImage(minWidth, maxWidth, minHeight, maxHeight);
-}
 
 int main()
 {
@@ -49,45 +33,26 @@ int main()
 
 	std::vector<Match> matches;
 	int num_matches;
-	int algorithm;
 
 	std::cout << "Please enter the number of closest matches you would like to find:" << std::endl;
 	std::cin >> num_matches;
 
-	std::cout << "Please select the correlation algorithm to use: 1. Sum of Squared Differences, 2. Normalised Cross Correlation" << std::endl;
-	
-	do
-	{
-		std::cin >> algorithm;
-	} while (algorithm < 1 || algorithm > 2);
-
-
 	std::cout << "Calculating the best matches..." << std::endl;
 
-	for (int i = 0; i < scene.Height(); i + query.Height())
+	for (int i = 0; i < scene.Height(); i += query.Height())
 	{
-		for (int j = 0; j < scene.Width(); j+ query.Width())
+		for (int j = 0; j < scene.Width(); j += query.Width())
 		{
-			if (i + query.Height() > scene.Height())
+			if (i > scene.Height() - query.Height())
 				i = scene.Height() - query.Height();
 
-			if (j + query.Width() > scene.Width())
+			if (j > scene.Width() - query.Width())
 				j = scene.Width() - query.Width();
 
 			float score = 0;
 			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
 
-			switch (algorithm)
-			{
-			case 1:
-				score = SSD(sub, query);
-				break;
-			case 2:
-				score = NCC(sub, query);
-				break;
-			default:
-				break;
-			}
+			score = calculateScore(sub, query);
 
 			if (matches.size() < num_matches)
 			{
