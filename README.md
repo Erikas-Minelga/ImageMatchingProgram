@@ -3,7 +3,7 @@ A program which finds an image within a larger image using Sum of Squared Differ
 
 <h1>Features</h1>
 <ul>
- <li>mages of any size can be used but only PGM format is supported</li>
+ <li>Images of any size can be used but only PGM format is supported</li>
   <li>Program can find multiple matches and the number can be determined by the user</li>
   <li>The closest matches calculated by the program are highlighted with outlines which get lighter in colour the further the match the sub-image is</li>
  </ul>
