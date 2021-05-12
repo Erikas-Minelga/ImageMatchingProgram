@@ -363,6 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 *.pgm
-*.sln
-*.vcxproj
-*.vcxproj.filters
+NearestNeighbourSearch.sln
+NearestNeighbourSearch.vcxproj
+NearestNeighbourSearch.vcxproj.filters
