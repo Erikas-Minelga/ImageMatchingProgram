@@ -1,5 +1,4 @@
 #include "Image.h"
-#include <future>
 
 struct Match
 {
@@ -65,34 +64,21 @@ int main()
 
 	std::cout << "Calculating the best matches..." << std::endl;
 
-	std::vector<std::future<Image>> subs_futures;
-
-	for (int i = 0; i < scene.Height() - query.Height(); i++)
+	for (int i = 0; i < scene.Height(); i + query.Height())
 	{
-		for (int j = 0; j < scene.Width() - query.Height(); j++)
+		for (int j = 0; j < scene.Width(); j+ query.Width())
 		{
-			/*if (i + query.Height() > scene.Height())
+			if (i + query.Height() > scene.Height())
 				i = scene.Height() - query.Height();
 
 			if (j + query.Width() > scene.Width())
-				j = scene.Width() - query.Width();*/
+				j = scene.Width() - query.Width();
 
-			//scene.createSubImage(j, j + query.Width(), i, i + query.Height());
+			float score = 0;
+			Image sub = scene.createSubImage(j, j + query.Width(), i, i + query.Height());
 
-			subs_futures.push_back(std::async(std::launch::async,getSubImage,&scene,j, j + query.Width(), i, i + query.Height()));
-			
-		}
-	}
-	
-
-	for (auto& a : subs_futures)
-	{
-		float score = 0;
-
-		Image sub = a.get();
-
-		switch (algorithm)
-		{
+			switch (algorithm)
+			{
 			case 1:
 				score = SSD(sub, query);
 				break;
@@ -101,25 +87,25 @@ int main()
 				break;
 			default:
 				break;
-		}
-
-		/*if (matches.size() < num_matches)
-		{
-			matches.push_back(Match(j, j + sub.Width(), i, i + sub.Height(), score));
-		}
-		else
-		{
-			if (score < matches[num_matches - 1].score)
-			{
-				matches[num_matches - 1] = Match(j, j + sub.Width(), i, i + sub.Height(), score);
 			}
+
+			if (matches.size() < num_matches)
+			{
+				matches.push_back(Match(j, j + sub.Width(), i, i + sub.Height(), score));
+			}
+			else
+			{
+				if (score < matches[num_matches - 1].score)
+				{
+					matches[num_matches - 1] = Match(j, j + sub.Width(), i, i + sub.Height(), score);
+				}
+			}
+
+			if (num_matches > 1)			//No need to sort if user only wants 1 match
+				std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });
+			
 		}
-
-		if (num_matches > 1)			//No need to sort if user only wants 1 match
-			std::sort(matches.begin(), matches.end(), [](Match a, Match b) {return a.score < b.score; });*/
 	}
-
-
 	
 	std::cout << "Matching completed. Drawing outlines around the closest matches..." << std::endl;
 	std::cout << "INFORMATION: The darker the outline, the closer the match it is" << std::endl;
