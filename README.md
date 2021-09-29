@@ -7,7 +7,7 @@ This program can find multiple closest matches and outlines where those matches 
 Currently, PGM is the only supported image format.
 
 <h2>How to run</h2>
-To run the program, go over to Releases section, select ImageMatchingProgram, download ImageMatchingProgram.zip and extract it anywhere you'd like. For the program to run, 2 image files will need to be provided and placed in the same directory as the exe- scene.pgm and query.pgm. Program will create an additional file called "results.pgm" in the same directory as the exe. It is recommended to run the exe as Administrator.
+To run the program, go over to Releases section, select ImageMatchingProgram, download ImageMatchingProgram.zip and extract it anywhere you'd like. For the program to run, 2 image files will need to be provided and placed in the same directory as the exe- scene.pgm and query.pgm. Images are not included to avoid any copyright issues. PGM images can be created using an image manipulation software such as GIMP where the image can be exported as PGM. Program will create an additional file called "results.pgm" in the same directory as the exe. It is recommended to run the exe as Administrator.
 
 <h2>More information on Nearest Neighbour Search algorithm</h2>
 http://www.micc.unifi.it/delbimbo/wp-content/uploads/2013/11/A33_Matching.pdf
